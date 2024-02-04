@@ -1,17 +1,32 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
+  const auth = FIREBASE_AUTH;
   const navigation = useNavigation();
 
-  const handleRegister = () => {
-    // Implement your registration logic here
-    console.log('Registering...');
+  const signUp = async () => {
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+      setEmail("")
+      setPassword("")
+      setConfirmPassword("")
+      setUsername("")
+    }
   };
 
   const handleLogin = () => {
@@ -51,10 +66,15 @@ const RegisterScreen = () => {
       />
       <TouchableOpacity
         className='bg-[#0459D9] rounded-lg py-3 px-6 w-full items-center'
-        onPress={handleRegister}
+        onPress={() => signUp()}
+        disabled={loading} // Disable button when loading
       >
-        <Text className='text-lg font-semibold text-white'>Register</Text>
-      </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" /> // Show loader when loading
+        ) : (
+          <Text className='text-lg font-semibold text-white'>Register</Text> // Show text when not loading
+        )}
+        </TouchableOpacity>
       <TouchableOpacity onPress={handleLogin}>
         <Text style={{ marginTop: 10, color: 'black'}}>
           Already have an account? <Text className='text-[#0459D9]'>Login</Text> 
