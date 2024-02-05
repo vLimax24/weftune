@@ -28,6 +28,14 @@ const LoginScreen = () => {
     }
   };
 
+  const handleGoogle = async () => {
+    console.log('google')
+  }
+
+  const handleGithub = async () => {
+    console.log('github')
+  }
+
 
 
   return (
@@ -68,6 +76,18 @@ const LoginScreen = () => {
         <View style={{ flex: 1, height: 1, backgroundColor: '#6A6363' }} />
         <Text style={{ color: '#6A6363', marginHorizontal: 10 }}>or</Text>
         <View style={{ flex: 1, height: 1, backgroundColor: '#6A6363' }} />
+      </View>
+      <View className='flex-row items-center justify-center'>
+          <TouchableOpacity onPress={() => handleGoogle()}>
+            <View className='items-center justify-center p-4 mx-4 border border-gray-300 rounded-lg'>
+              <Image source={require('../assets/google.png')} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleGithub()}>
+            <View className='items-center justify-center p-4 mx-4 border border-gray-300 rounded-lg'>
+              <Image source={require('../assets/github.png')} />
+            </View>
+          </TouchableOpacity>
       </View>
     </View>
   );
