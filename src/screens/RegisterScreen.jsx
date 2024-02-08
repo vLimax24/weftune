@@ -70,9 +70,9 @@ const RegisterScreen = () => {
         disabled={loading} // Disable button when loading
       >
         {loading ? (
-          <ActivityIndicator size="small" color="#ffffff" /> // Show loader when loading
+          <ActivityIndicator size="small" color="#ffffff" />
         ) : (
-          <Text className='text-lg font-semibold text-white'>Register</Text> // Show text when not loading
+          <Text className='text-lg font-semibold text-white'>Register</Text>
         )}
         </TouchableOpacity>
       <TouchableOpacity onPress={handleLogin}>
