@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,7 +11,7 @@ const ListScreen = () => {
   }
 
   return (
-    <View className='px-5 pt-12'>
+    <ScrollView className='px-5 pt-12'>
       <Text className='text-xl font-bold'>Welcome back, Martin!</Text>
       <View className='mt-10'>
         {/* Here we need to map over all lists in the database the user is in */}
@@ -24,15 +24,18 @@ const ListScreen = () => {
           </View>
         </TouchableOpacity>
 
+
         {/* Creating Button for creating a new list */}
 
-        <TouchableOpacity onPress={handleRedirectToNewList}>
+        <TouchableOpacity onPress={handleRedirectToNewList} className='mb-20'>
           <View className='flex-row items-center justify-center w-full px-5 py-6 mt-5 border-2 border-gray-500 h-fit rounded-xl'>
             <Text className='text-xl font-semibold'>Create new List</Text>
           </View>
         </TouchableOpacity>
+
+        
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
