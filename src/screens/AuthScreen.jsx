@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AuthScreen = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const handleLoginPress = () => {
     navigation.navigate('Login');

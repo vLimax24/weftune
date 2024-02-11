@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image, ActivityIndicator, Moda
 import { useNavigation } from '@react-navigation/native';
 import { CheckCircle, AlertOctagon } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios'
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
@@ -51,11 +52,12 @@ const RegisterScreen = () => {
         throw new Error('Network response was not ok');
       }
 
-      await AsyncStorage.setItem('userData', JSON.stringify({ username, email, avatarImage }));
+      const user = await axios.get(`https://weftune.com/api/findUser/${email}`)
 
-      const userData = await AsyncStorage.getItem('userData');
-      const userParsed = JSON.parse(userData)
-      console.log(userParsed)
+      const userData = user.data
+      console.log(userData)
+
+      await AsyncStorage.setItem('userData', JSON.stringify(userData));
     
       // Show success modal
       setSuccessModalVisible(true);
@@ -159,11 +161,9 @@ const RegisterScreen = () => {
         onRequestClose={() => {
           setSuccessModalVisible(false);
         }}
-        className='bg-[rgba(0,0,0,0.5)]'
-        style={{backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       >
         <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" style={{backgroundColor: 'rgba(0, 0, 0, 0.5)' }}/>
-        <View className='bg-[rgba(0,0,0,0.5)] items-center justify-center flex-1'>
+        <View className='bg-[rgba(0,0,0,0.5)] items-center justify-center flex-1' style={{backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <View className='items-center justify-center px-12 pt-8 pb-4 bg-gray-800 rounded-2xl'>
             <CheckCircle color="white" size={64} />
             <View>

@@ -1,18 +1,36 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const ListScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const [userName, setUserName] = useState('');
 
   const handleRedirectToNewList = () => {
       navigation.navigate('CreateListScreen')
   }
 
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const userDataJSON = await AsyncStorage.getItem('userData');
+        if (userDataJSON !== null) {
+          const userData = JSON.parse(userDataJSON);
+          setUserName(userData.name);
+        }
+      } catch (error) {
+        console.error('Error retrieving user data from AsyncStorage:', error);
+      }
+    };
+
+    fetchUserName();
+  }, []);
+
   return (
-    <ScrollView className='px-5 pt-12'>
-      <Text className='text-xl font-bold'>Welcome back, Martin!</Text>
+    <ScrollView className='px-5 pt-12 bg-gray-900'>
+      <Text className='text-xl font-bold text-gray-300'>Welcome back, {userName}!</Text>
       <View className='mt-10'>
         {/* Here we need to map over all lists in the database the user is in */}
         <TouchableOpacity>
@@ -29,7 +47,7 @@ const ListScreen = () => {
 
         <TouchableOpacity onPress={handleRedirectToNewList} className='mb-20'>
           <View className='flex-row items-center justify-center w-full px-5 py-6 mt-5 border-2 border-gray-500 h-fit rounded-xl'>
-            <Text className='text-xl font-semibold'>Create new List</Text>
+            <Text className='text-xl font-semibold text-white'>Create new List</Text>
           </View>
         </TouchableOpacity>
 
