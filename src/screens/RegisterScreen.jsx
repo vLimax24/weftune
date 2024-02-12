@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { CheckCircle, AlertOctagon } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
+import Input from '../components/Input'
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
@@ -85,40 +86,38 @@ const RegisterScreen = () => {
   }
 
   return (
-    <View className='items-center flex-1 px-5'>
-      <Image source={require('../assets/wave.png')} className='absolute'/>
-      <Text className='mt-[70px] text-white font-black text-[48px]'>Register</Text>
-      <TextInput
-        className='border border-[#0459D9] rounded-lg px-4 py-2 mb-4 w-full mt-[200px]'
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        className='border border-[#0459D9] rounded-lg px-4 py-2 mb-4 w-full'
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        className='border border-[#0459D9] rounded-lg px-4 py-2 mb-4 w-full'
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        className='border border-[#0459D9] rounded-lg px-4 py-2 mb-4 w-full'
-        placeholder="Confirm Password"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+    <View className='items-center flex-1 px-5 bg-gray-900'>
+      <Text className='mt-[70px] text-gray-200 font-black text-[31px]'>Welcome at Weftune!</Text>
+      <View className='mt-16 mb-5'>
+              <Input
+                        placeholder="Username"
+                        onChangeText={(text) => setUsername(text)}
+                        inputValue={username}
+                        width={300}
+              />
+              <Input
+                        placeholder="Email"
+                        onChangeText={(text) => setEmail(text)}
+                        inputValue={email}
+                        width={300}
+              />
+              <Input
+                        placeholder="Password"
+                        onChangeText={(text) => setPassword(text)}
+                        inputValue={password}
+                        width={300}
+              />
+              <Input
+                        placeholder="Confirm Password"
+                        onChangeText={(text) => setConfirmPassword(text)}
+                        inputValue={confirmPassword}
+                        width={300}
+              />
+      </View>
       <TouchableOpacity
-        className='bg-[#0459D9] rounded-lg py-3 px-6 w-full items-center'
+        className='items-center w-[300px] px-6 py-3 bg-green-500 rounded-lg'
         onPress={() => signUp()}
-        disabled={loading} // Disable button when loading
+        disabled={loading}
       >
         {loading ? (
           <ActivityIndicator size="small" color="#ffffff" />
@@ -127,8 +126,8 @@ const RegisterScreen = () => {
         )}
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogin}>
-        <Text style={{ marginTop: 10, color: 'black'}}>
-          Already have an account? <Text className='text-[#0459D9]'>Login</Text> 
+        <Text style={{ marginTop: 10, color: 'white'}}>
+          Already have an account? <Text className='text-green-500'>Login</Text> 
         </Text>
       </TouchableOpacity>
 

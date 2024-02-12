@@ -26,6 +26,10 @@ const ListScreen = () => {
     };
 
     fetchUserName();
+
+    const interval = setInterval(fetchUserName, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
