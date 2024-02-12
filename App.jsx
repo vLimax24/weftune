@@ -3,13 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
-import Navbar from './src/components/Navbar'; // Assuming you have a component for bottom navigation
+import Navbar from './src/components/Navbar';
+import ProfileScreen from './src/screens/ProfileScreen'
 import ListScreen from './src/screens/ListScreen';
 import CreateListScreen from './src/screens/CreateListScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import { StatusBar } from 'expo-status-bar';
 
 const Stack = createStackNavigator();
 
@@ -50,8 +51,10 @@ export default function App() {
         <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
       {user === 'loggedIn' && <Navbar />}
+      <StatusBar style="auto" />
     </NavigationContainer>
   );
 }

@@ -12,8 +12,8 @@ const RegisterScreen = () => {
   const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [successModalVisible, setSuccessModalVisible] = useState(false); // State for success modal
-  const avatarImage = `https://ui-avatars.com/api/?name=${username}&length=1&background=0459D9&color=fff`
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const avatarImage = `https://ui-avatars.com/api/?name=${username}&length=2&background=0459D9&color=fff&size=128`
   
 
   const navigation = useNavigation();
