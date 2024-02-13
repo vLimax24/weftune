@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
-import { Plus } from 'lucide-react-native'
-import Input from '../components/Input'
-import axios from 'axios'
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Modal, StatusBar } from 'react-native';
+import { Plus, CheckCircle } from 'lucide-react-native'; // Assuming you have imported the necessary icons
+import Input from '../components/Input';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateListScreen = () => {
   const [theme, setTheme] = useState('');
   const [background, setBackground] = useState('');
   const [name, setName] = useState('');
-  const [people, setPeople] = useState([])
-  const [userIds, setUserIds] = useState([]);
-  const [personText, setPersonText] = useState()
+  const [people, setPeople] = useState([]);
+  const [personText, setPersonText] = useState('');
   const [clearInput, setClearInput] = useState(false);
-  const [userExists, setUserExists] = useState(false)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [ownerId, setOwnerId] = useState('');
+  const [successModalVisible, setSuccessModalVisible] = useState(false); // New state variable for success modal
 
   const selectTheme = (selectedTheme) => {
     setTheme(selectedTheme);
@@ -25,55 +24,50 @@ const CreateListScreen = () => {
   const selectBackground = (selectedBackground) => {
     setBackground(selectedBackground);
   };
+
   useEffect(() => {
-      const fetchUserId = async () => {
-        try {
-          const userDataJSON = await AsyncStorage.getItem('userData');
-          if (userDataJSON !== null) {
-            const userData = JSON.parse(userDataJSON);
-            setOwnerId(userData._id);
-          }
-        } catch (error) {
-          console.error('Error retrieving user data from AsyncStorage:', error);
+    const fetchUserId = async () => {
+      try {
+        const userDataJSON = await AsyncStorage.getItem('userData');
+        if (userDataJSON !== null) {
+          const userData = JSON.parse(userDataJSON);
+          setOwnerId(userData._id);
         }
-      };
+      } catch (error) {
+        console.error('Error retrieving user data from AsyncStorage:', error);
+      }
+    };
 
-      fetchUserId();
+    fetchUserId();
 
-      const interval = setInterval(fetchUserId, 1000);
+    const interval = setInterval(fetchUserId, 1000);
 
-      return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
-
 
   const addPersonToState = () => {
     if (personText.trim() !== '') {
-      // Check if the person is already in the people array
       if (!people.includes(personText)) {
         setPeople(prevPeople => [...prevPeople, personText]);
       } else {
-        // Person already exists in the list
         setError('Person already added!');
-        setPersonText('')
+        setPersonText('');
         return;
       }
-      setPersonText(''); // Clear input text after adding a person
+      setPersonText('');
     }
   };
-  
 
   const checkUserExists = async () => {
-    setError('')
+    setError('');
     setLoading(true);
     try {
       const user = await axios.get(`https://weftune.com/api/checkUserExists/${personText}`);
       const userData = user.data;
       if (userData === true) {
-        setUserExists(true);
         addPersonToState();
       } else {
-        setUserExists(false);
-        setError('Username doesn\'t exist!')
+        setError("Username doesn't exist!");
       }
     } catch (error) {
       console.error('Error:', error);
@@ -86,63 +80,34 @@ const CreateListScreen = () => {
     setPeople(prevPeople => {
       const updatedPeople = [...prevPeople];
       updatedPeople.splice(index, 1);
-      setPeople(updatedPeople)
       return updatedPeople;
     });
   };
 
-  const convertPersonIntoId = async () => {
-    setUserIds([]);
-    try {
-      setLoading(true);
-      const ids = await Promise.all(people.map(async (email) => {
-        try {
-          const response = await axios.get(`https://weftune.com/api/findUser/${email}`);
-          return response.data._id;
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          return null;
-        }
-      }));
-      setUserIds(ids.filter(id => id !== null));
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Error converting person into ID');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  
-
   const createList = async () => {
     try {
-      await convertPersonIntoId();
-      console.log(userIds);
       const responseCreateList = await axios.post('https://weftune.com/api/createList', {
         name: name,
         colorTheme: theme,
         backgroundImage: background,
         userId: ownerId,
       });
-  
-      const listId = responseCreateList.data._id;
-      console.log(listId)
 
-      // this gives the follow error:  Error adding person to list: [AxiosError: Request failed with status code 405]
-        await Promise.all(
-          userIds.map(async (userId) => {
-            try {
-              const responseAddPerson = await axios.post(
-                `https://www.weftune.com/api/addPersonToList/${listId}/${userId}`
-              );
-              console.log(responseAddPerson.data);
-            } catch (error) {
-              console.error('Error adding person to list:', error);
-            }
-          })
-        );
-      console.log(responseCreateList.data);
+      const listId = responseCreateList.data._id;
+
+      await Promise.all(
+        people.map(async (person) => {
+          try {
+            await axios.post(
+              `https://www.weftune.com/api/addPersonToList/${listId}/${person}`
+            );
+          } catch (error) {
+            console.error('Error adding person to list:', error);
+          }
+        })
+      );
+
+      setSuccessModalVisible(true); // Show success modal on successful list creation
     } catch (e) {
       console.error('Error creating list:', e);
     }
@@ -151,6 +116,22 @@ const CreateListScreen = () => {
 
   return (
     <ScrollView className='px-5 pt-12' scrollEnabled={true} showsVerticalScrollIndicator={false}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={successModalVisible}
+        onRequestClose={() => {
+          setSuccessModalVisible(false);
+        }}
+      >
+        <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)"/>
+        <View className='bg-[rgba(0,0,0,0.5)] items-center justify-center flex-1' style={{backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <View className='items-center justify-center px-12 pt-8 pb-4 bg-gray-800 rounded-2xl'>
+            <CheckCircle color="rgb(34 197 94)" size={64} />
+            <Text className='mt-2 text-xl font-bold text-white'>Liste erstellt!</Text>
+          </View>
+        </View>
+      </Modal>
       <View className='flex-row items-center justify-between'>
         <Text className='text-2xl font-bold text-white'>Create a new List</Text>
         <TouchableOpacity className='px-2 py-1 bg-green-500 rounded-md' onPress={createList}>
