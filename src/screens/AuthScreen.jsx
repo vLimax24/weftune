@@ -23,15 +23,15 @@ const AuthScreen = () => {
         
       </View>
       <View className='w-full mb-5 text-center'>
-        <Text className='my-4 mt-5 text-2xl font-bold'>Welcome at Weftune!</Text>
+        <Text className='my-4 mt-5 text-2xl font-bold text-white'>Welcome at Weftune!</Text>
         <TouchableOpacity
-          className='px-4 py-4 justify-center items-center my-1 bg-[#0459D9] rounded-xl w-full'
+          className='items-center justify-center w-full px-4 py-4 my-1 bg-green-500 rounded-xl'
           onPress={handleLoginPress}
         >
           <Text className='font-semibold text-white text-[16px]'>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className='px-4 py-4 justify-center items-center my-1 rounded-xl bg-[#0459D9] w-full'
+          className='items-center justify-center w-full px-4 py-4 my-1 bg-green-500 rounded-xl'
           onPress={handleRegisterPress}
         >
           <Text className='font-semibold text-white text-[16px]'>Register</Text>

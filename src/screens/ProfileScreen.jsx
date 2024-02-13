@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Pencil, ChevronLeft, CheckCircle } from 'lucide-react-native'
 import Input from '../components/Input'
+import { useNavigation } from '@react-navigation/native';
 
 
 const ProfileScreen = () => {
@@ -14,6 +15,7 @@ const ProfileScreen = () => {
     const [nameChangeSuccessModal, setNameChangeSuccessModal] = useState(false)
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigation = useNavigation()
 
     const handleInputChange = (text) => {
       setInputValue(text);
@@ -44,6 +46,11 @@ const ProfileScreen = () => {
     const toggleNameChangeSuccessModal = () => {
         setNameChangeSuccessModal(!nameChangeSuccessModal)
     }
+
+    const logOut = async () => {
+      await AsyncStorage.removeItem('userData')
+      navigation.navigate('Auth')
+    } 
 
     const changeUsername = async () => {
         setLoading(true)
@@ -142,6 +149,12 @@ const ProfileScreen = () => {
           </View>
         </View>
       </Modal>
+
+        <View className='items-center justify-center mt-10'>
+          <TouchableOpacity className='items-center justify-center w-64 py-3 bg-red-600 rounded-lg' onPress={() => logOut()}>
+            <Text className='text-white'>Logout</Text>
+          </TouchableOpacity>
+        </View>
     </ScrollView>
 
 

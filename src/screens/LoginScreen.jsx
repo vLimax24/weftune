@@ -46,7 +46,7 @@ const LoginScreen = () => {
         setTimeout(() => {
           navigation.navigate('List');
           setSuccessModalVisible(false)
-        }, 2000);
+        }, 1000);
       } else {
         setError(data.error);
       }

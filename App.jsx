@@ -19,20 +19,26 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkUserData = async () => {
-      try {
-        const userDataJSON = await AsyncStorage.getItem('userData');
-        if (userDataJSON !== null) {
-          setUser('loggedIn');
+    const intervalId = setInterval(() => {
+      const checkUserData = async () => {
+        try {
+          const userDataJSON = await AsyncStorage.getItem('userData');
+          if (userDataJSON !== null) {
+            setUser('loggedIn');
+          } else {
+            setUser('loggedOut');
+          }
+        } catch (error) {
+          console.error('Error checking user data in AsyncStorage:', error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error('Error checking user data in AsyncStorage:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
+  
+      checkUserData();
+    }, 100)
 
-    checkUserData();
+    return () => clearInterval(intervalId);
   }, []);
 
   if (isLoading) {

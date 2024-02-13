@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, TextInput, StyleSheet, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
-const Input = ({ placeholder, onChangeText, inputValue, width }) => {
+const Input = ({ placeholder, onChangeText, inputValue, clearInput, width }) => {
     const [placeholderAnim] = useState(new Animated.Value(1));
     const [focus, setFocus] = useState(false)
     const [inputText, setInputText] = useState('')
@@ -25,6 +25,10 @@ const Input = ({ placeholder, onChangeText, inputValue, width }) => {
             }).start();
         }
     };
+
+    useEffect(() => {
+        setInputText(inputValue);
+      }, [inputValue]);
 
     const handleInputChange = (text) => {
         setInputText(text);

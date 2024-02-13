@@ -50,7 +50,7 @@ const ListScreen = () => {
         {/* Creating Button for creating a new list */}
 
         <TouchableOpacity onPress={handleRedirectToNewList} className='mb-20'>
-          <View className='flex-row items-center justify-center w-full px-5 py-6 mt-5 border-2 border-gray-500 h-fit rounded-xl'>
+          <View className='flex-row items-center justify-center w-full px-5 py-6 mt-5 bg-green-500 h-fit rounded-xl'>
             <Text className='text-xl font-semibold text-white'>Create new List</Text>
           </View>
         </TouchableOpacity>

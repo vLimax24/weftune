@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { Plus } from 'lucide-react-native'
+import Input from '../components/Input'
+import axios from 'axios'
 
 const CreateListScreen = () => {
   const [theme, setTheme] = useState('');
   const [background, setBackground] = useState('');
+  const [name, setName] = useState('');
+  const [people, setPeople] = useState([])
+  const [personText, setPersonText] = useState()
+  const [clearInput, setClearInput] = useState(false);
+  const [userExists, setUserExists] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const selectTheme = (selectedTheme) => {
     setTheme(selectedTheme);
@@ -14,11 +23,56 @@ const CreateListScreen = () => {
     setBackground(selectedBackground);
   };
 
+  const addPersonToState = () => {
+    if (personText.trim() !== '') {
+      // Check if the person is already in the people array
+      if (!people.includes(personText)) {
+        setPeople(prevPeople => [...prevPeople, personText]);
+      } else {
+        // Person already exists in the list
+        setError('Person already added!');
+        setPersonText('')
+        return;
+      }
+      setPersonText(''); // Clear input text after adding a person
+    }
+  };
+  
+
+  const checkUserExists = async () => {
+    setError('')
+    setLoading(true);
+    try {
+      const user = await axios.get(`https://weftune.com/api/checkUserExists/${personText}`);
+      const userData = user.data;
+      if (userData === true) {
+        setUserExists(true);
+        addPersonToState();
+      } else {
+        setUserExists(false);
+        setError('Username doesn\'t exist!')
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removePerson = (index) => {
+    setPeople(people.filter((_, i) => i !== index));
+  };
+
   return (
-    <ScrollView className='px-5 pt-12'>
-      <Text className='text-2xl font-bold'>Create a new List</Text>
-      <View className='mt-10'>
-        <TextInput type="text" className='mx-2 border-b-2'placeholder='Family'/>
+    <ScrollView className='px-5 pt-12' scrollEnabled={true} showsVerticalScrollIndicator={false}>
+      <Text className='text-2xl font-bold text-white'>Create a new List</Text>
+      <View className='items-center justify-center mt-10'>
+        <Input
+          placeholder="Name"
+          onChangeText={(text) => setName(text)}
+          inputValue={name}
+          width={300}
+        />
         <View className='flex flex-row flex-wrap items-center justify-center mt-5'>
           <TouchableOpacity
             className={`bg-slate-400 w-[45%] mx-2 h-24 rounded-md mb-4 border-none ${background === 'backgroundImage-001.jpg' && 'border-blue-500 border-2'}`}
@@ -44,19 +98,53 @@ const CreateListScreen = () => {
             activeOpacity={0.6}  
           >
           </TouchableOpacity>
+          
         </View>
       </View>
       <View className='mx-2 mt-5'>
-        <Text className='text-lg font-semibold'>Want to add some people?</Text>
-        <View className='flex-row items-center mt-5'>
-          <TextInput type="text" className='w-4/5 p-2 pl-4 mr-4 border rounded-xl'placeholder='johndoe21'/>
-          <TouchableOpacity className='flex items-center justify-center w-12 h-12 bg-gray-500 rounded-full'>
-            <Icon name="plus" size={20} color="#fff" />
+        <Text className='text-lg font-semibold text-white'>Want to add some people?</Text>
+        <View className='mt-3'>
+          <View className='flex-row items-center justify-center'>
+            <Input
+              placeholder="Email"
+              onChangeText={(text) => {
+                setPersonText(text);
+              }}
+              inputValue={personText}
+              width={240}
+              clearInput={clearInput}
+            />
+            <TouchableOpacity className='flex items-center justify-center w-12 h-12 ml-5 bg-green-500 rounded-lg' onPress={checkUserExists}>
+            {loading ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
+              <Plus size={20} color={'#fff'} />
+            )}
           </TouchableOpacity>
+            
+          </View>
+          <View className='text-left'>
+            {error && <Text className='text-red-600'>{error}</Text>}
+          </View>
+        </View>
+        <View className='mt-2'>
+          {people.length > 0 && (
+            <Text className='font-semibold text-white text-md'>People added:</Text>
+          )}
+          <View className='mt-2'>
+            {people.map((person, index) => (
+              <View key={index} className="flex flex-row items-center justify-between mb-2">
+                <Text className="mr-2 text-white text-md">{person}</Text>
+                <TouchableOpacity onPress={() => removePerson(index)} className='px-2 py-1 bg-red-600 rounded-md'>
+                  <Text className="text-white">Remove</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
         </View>
       </View>
-      <View className='mx-2 mt-5'>
-        <Text className='text-lg font-semibold'>select a color theme</Text>
+      <View className='mx-2 mt-5 mb-20'>
+        <Text className='text-lg font-semibold text-white'>Color Theme</Text>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View className='flex flex-row mt-3'>
             <TouchableOpacity className={`w-16 h-10 mr-1 bg-green-100 rounded-md ${theme === 'bg-green-100' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-100')}/>
