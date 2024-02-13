@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator 
 import { Plus } from 'lucide-react-native'
 import Input from '../components/Input'
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateListScreen = () => {
   const [theme, setTheme] = useState('');
@@ -15,6 +16,7 @@ const CreateListScreen = () => {
   const [userExists, setUserExists] = useState(false)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [ownerId, setOwnerId] = useState('');
 
   const selectTheme = (selectedTheme) => {
     setTheme(selectedTheme);
@@ -23,11 +25,26 @@ const CreateListScreen = () => {
   const selectBackground = (selectedBackground) => {
     setBackground(selectedBackground);
   };
-
   useEffect(() => {
-    console.log(userIds);
-    // Perform any additional actions with userIds here
-  }, [userIds]);
+      const fetchUserId = async () => {
+        try {
+          const userDataJSON = await AsyncStorage.getItem('userData');
+          if (userDataJSON !== null) {
+            const userData = JSON.parse(userDataJSON);
+            setOwnerId(userData._id);
+          }
+        } catch (error) {
+          console.error('Error retrieving user data from AsyncStorage:', error);
+        }
+      };
+
+      fetchUserId();
+
+      const interval = setInterval(fetchUserId, 1000);
+
+      return () => clearInterval(interval);
+  }, []);
+
 
   const addPersonToState = () => {
     if (personText.trim() !== '') {
@@ -101,18 +118,36 @@ const CreateListScreen = () => {
   const createList = async () => {
     try {
       await convertPersonIntoId();
-      console.log(userIds)
-      const response = await axios.post('https://weftune.com/api/createList', {
+      console.log(userIds);
+      const responseCreateList = await axios.post('https://weftune.com/api/createList', {
         name: name,
-        users: userIds,
-        colorTheme: theme, 
+        colorTheme: theme,
         backgroundImage: background,
+        userId: ownerId,
       });
-      console.log(response.data);
+  
+      const listId = responseCreateList.data._id;
+      console.log(listId)
+
+      // this gives the follow error:  Error adding person to list: [AxiosError: Request failed with status code 405]
+        await Promise.all(
+          userIds.map(async (userId) => {
+            try {
+              const responseAddPerson = await axios.post(
+                `https://www.weftune.com/api/addPersonToList/${listId}/${userId}`
+              );
+              console.log(responseAddPerson.data);
+            } catch (error) {
+              console.error('Error adding person to list:', error);
+            }
+          })
+        );
+      console.log(responseCreateList.data);
     } catch (e) {
-      console.error('Error:', e);
+      console.error('Error creating list:', e);
     }
-  }
+  };
+  
 
   return (
     <ScrollView className='px-5 pt-12' scrollEnabled={true} showsVerticalScrollIndicator={false}>
