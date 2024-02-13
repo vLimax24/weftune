@@ -43,8 +43,15 @@ export default function App() {
     );
   }
 
+  const MyTheme = {
+    dark: false,
+    colors: {
+      background: '#111827',
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <Stack.Navigator initialRouteName={user === 'loggedIn' ? 'List' : 'Auth'}>
         <Stack.Screen name="List" component={ListScreen} options={{ headerShown: false }} />
         <Stack.Screen name="CreateListScreen" component={CreateListScreen} options={{ headerShown: false }} />
