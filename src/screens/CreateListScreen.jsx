@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { Plus } from 'lucide-react-native'
 import Input from '../components/Input'
@@ -9,6 +9,7 @@ const CreateListScreen = () => {
   const [background, setBackground] = useState('');
   const [name, setName] = useState('');
   const [people, setPeople] = useState([])
+  const [userIds, setUserIds] = useState([]);
   const [personText, setPersonText] = useState()
   const [clearInput, setClearInput] = useState(false);
   const [userExists, setUserExists] = useState(false)
@@ -22,6 +23,11 @@ const CreateListScreen = () => {
   const selectBackground = (selectedBackground) => {
     setBackground(selectedBackground);
   };
+
+  useEffect(() => {
+    console.log(userIds);
+    // Perform any additional actions with userIds here
+  }, [userIds]);
 
   const addPersonToState = () => {
     if (personText.trim() !== '') {
@@ -60,12 +66,62 @@ const CreateListScreen = () => {
   };
 
   const removePerson = (index) => {
-    setPeople(people.filter((_, i) => i !== index));
+    setPeople(prevPeople => {
+      const updatedPeople = [...prevPeople];
+      updatedPeople.splice(index, 1);
+      setPeople(updatedPeople)
+      return updatedPeople;
+    });
   };
+
+  const convertPersonIntoId = async () => {
+    setUserIds([]);
+    try {
+      setLoading(true);
+      const ids = await Promise.all(people.map(async (email) => {
+        try {
+          const response = await axios.get(`https://weftune.com/api/findUser/${email}`);
+          return response.data._id;
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          return null;
+        }
+      }));
+      setUserIds(ids.filter(id => id !== null));
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Error converting person into ID');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+
+  const createList = async () => {
+    try {
+      await convertPersonIntoId();
+      console.log(userIds)
+      const response = await axios.post('https://weftune.com/api/createList', {
+        name: name,
+        users: userIds,
+        colorTheme: theme, 
+        backgroundImage: background,
+      });
+      console.log(response.data);
+    } catch (e) {
+      console.error('Error:', e);
+    }
+  }
 
   return (
     <ScrollView className='px-5 pt-12' scrollEnabled={true} showsVerticalScrollIndicator={false}>
-      <Text className='text-2xl font-bold text-white'>Create a new List</Text>
+      <View className='flex-row items-center justify-between'>
+        <Text className='text-2xl font-bold text-white'>Create a new List</Text>
+        <TouchableOpacity className='px-2 py-1 bg-green-500 rounded-md' onPress={createList}>
+          <Text className='text-white text-md'>Create</Text>
+        </TouchableOpacity>
+      </View>
       <View className='items-center justify-center mt-10'>
         <Input
           placeholder="Name"
