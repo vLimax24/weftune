@@ -106,12 +106,14 @@ const RegisterScreen = () => {
                         onChangeText={(text) => setPassword(text)}
                         inputValue={password}
                         width={300}
+                        password={true}
               />
               <Input
                         placeholder="Confirm Password"
                         onChangeText={(text) => setConfirmPassword(text)}
                         inputValue={confirmPassword}
                         width={300}
+                        password={true}
               />
       </View>
       <TouchableOpacity

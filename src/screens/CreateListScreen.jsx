@@ -4,8 +4,11 @@ import { Plus, CheckCircle } from 'lucide-react-native'; // Assuming you have im
 import Input from '../components/Input';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const CreateListScreen = () => {
+  const navigation = useNavigation();
+  
   const [theme, setTheme] = useState('');
   const [background, setBackground] = useState('');
   const [name, setName] = useState('');
@@ -107,7 +110,10 @@ const CreateListScreen = () => {
         })
       );
 
-      setSuccessModalVisible(true); // Show success modal on successful list creation
+      setSuccessModalVisible(true); 
+      setTimeout(() => {
+        navigation.navigate('List');
+      }, 1000);
     } catch (e) {
       console.error('Error creating list:', e);
     }
@@ -219,14 +225,14 @@ const CreateListScreen = () => {
         <Text className='text-lg font-semibold text-white'>Color Theme</Text>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View className='flex flex-row mt-3'>
-            <TouchableOpacity className={`w-16 h-10 mr-1 bg-green-100 rounded-md ${theme === 'bg-green-100' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-100')}/>
-            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-200 rounded-md ${theme === 'bg-green-200' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-200')}/>
-            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-300 rounded-md ${theme === 'bg-green-300' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-300')}/>
-            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-400 rounded-md ${theme === 'bg-green-400' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-400')}/>
-            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-500 rounded-md ${theme === 'bg-green-500' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-500')}/>
-            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-600 rounded-md ${theme === 'bg-green-600' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-600')}/>
-            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-700 rounded-md ${theme === 'bg-green-700' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-700')}/>
-            <TouchableOpacity className={`w-16 h-10 ml-1 bg-green-800 rounded-md ${theme === 'bg-green-800' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('bg-green-800')}/>
+            <TouchableOpacity className={`w-16 h-10 mr-1 bg-green-100 rounded-md ${theme === 'green-100' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-100')}/>
+            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-200 rounded-md ${theme === 'green-200' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-200')}/>
+            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-300 rounded-md ${theme === 'green-300' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-300')}/>
+            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-400 rounded-md ${theme === 'green-400' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-400')}/>
+            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-500 rounded-md ${theme === 'green-500' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-500')}/>
+            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-600 rounded-md ${theme === 'green-600' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-600')}/>
+            <TouchableOpacity className={`w-16 h-10 mx-1 bg-green-700 rounded-md ${theme === 'green-700' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-700')}/>
+            <TouchableOpacity className={`w-16 h-10 ml-1 bg-green-800 rounded-md ${theme === 'green-800' && 'border-blue-500 border-2'}`} onPress={() => selectTheme('green-800')}/>
           </View>
         </ScrollView>
       </View>
