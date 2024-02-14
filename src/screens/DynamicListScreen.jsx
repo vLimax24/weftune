@@ -15,6 +15,7 @@ const DynamicListScreen = ({ route }) => {
   const [background, setBackground] = useState('')
   const [theme, setTheme] = useState('')
   const [filterOpen, setFilterOpen] = useState(false)
+  const [category, setCategory] = useState('')
   const { listId } = route.params; // Accessing listId from route params
 
   const snapPoints = useMemo(() => ['30%', '70%'], [])
@@ -47,18 +48,24 @@ const DynamicListScreen = ({ route }) => {
   }
 
   const categories = [
-    'Brot & Gebäck',
-    'Milch & Käse',
-    'Fleisch & Fisch',
-    'Zutaten & Gewürze',
-    'Fertig- & Tiefkühlprodukte',
-    'Getreideprodukte',
-    'Snacks & Süsswaren',
-    'Getränke',
-    'Haushalt',
-    'Pflege & Gesundheit',
-    'Tierbedarf',
+    ['Obst & Gemüse', 'OBST_GEMUESE'],
+    ['Brot & Gebäck', 'BROT_GEBACK'],
+    ['Milch & Käse', 'MILCH_KAESE'],
+    ['Fleisch & Fisch', 'FLEISCH_FISCH'],
+    ['Zutaten & Gewürze', 'ZUTATEN_GEWRZE'],
+    ['Fertig- & Tiefkühlprodukte', 'FERTIG_TIEFKUEHLPRODUKTE'],
+    ['Getreideprodukte', 'GETREIDEPRODUKTE'],
+    ['Snacks & Süsswaren', 'SNACKS_SUSSWAREN'],
+    ['Getränke', 'GETRAENKE'],
+    ['Haushalt', 'HAUSHALT'],
+    ['Pflege & Gesundheit', 'PFLEGE_GESUNDHEIT'],
+    ['Tierbedarf', 'TIERBEDARF'],
+    ['Baumarkt & Garten', 'BAUMARKT_GARTEN']
   ];
+
+  const navigateToRoute = (category) => {
+    navigation.navigate('Item', {category: category, listId: listId})
+  }
 
   return (
     <View>
@@ -82,21 +89,13 @@ const DynamicListScreen = ({ route }) => {
             </TouchableOpacity>
           </View>
         */}
-        <View className='mt-5 mb-16'>
-          <TouchableOpacity className='flex-row items-center justify-between px-3 py-3 bg-gray-800 rounded-t-xl'>
-            <Text className='text-lg text-white'>Obst & Gemüse</Text>
-            <ChevronRight color={'#fff'} size={25}/>
-          </TouchableOpacity>
+        <View className='mt-5 mb-32'>
           {categories.map((category, index) => (
-            <TouchableOpacity key={index} className='flex-row items-center justify-between px-3 py-3 bg-gray-800 mt-0.5' onPress={() => {/* Handle category press */}}>
-              <Text className='text-lg text-white'>{category}</Text>
+            <TouchableOpacity key={index} className='flex-row items-center justify-between px-3 py-3 bg-gray-800 mt-0.5' onPress={() => navigateToRoute(category[1])}>
+              <Text className='text-lg text-white'>{category[0]}</Text>
               <ChevronRight color={'#fff'} size={25}/>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity className='flex-row items-center justify-between px-3 py-3 bg-gray-800 rounded-b-xl mt-0.5'>
-            <Text className='text-lg text-white'>Baumarkt & Garten</Text>
-            <ChevronRight color={'#fff'} size={25}/>
-          </TouchableOpacity>
         </View>
       </ScrollView>
       <View className='absolute bottom-0 left-0 right-0 items-center justify-center pt-2 bg-gray-900 rounded-t-xl'>

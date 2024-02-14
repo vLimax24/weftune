@@ -13,6 +13,7 @@ import RegisterScreen from './src/screens/RegisterScreen';
 import OfferScreen from './src/screens/OfferScreen';
 import { StatusBar } from 'expo-status-bar';
 import DynamicListScreen from './src/screens/DynamicListScreen';
+import AddItemScreen from './src/screens/AddItemScreen';
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,7 @@ export default function App() {
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Offer" component={OfferScreen} options={{ headerShown: false }} />
         <Stack.Screen name="DynamicListScreen" component={DynamicListScreen} options={{ headerShown: false }} getId={({ params }) => params.listId}/>
+        <Stack.Screen name="Item" component={AddItemScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
       {user === 'loggedIn' && <Navbar />}
       <StatusBar style="auto" />

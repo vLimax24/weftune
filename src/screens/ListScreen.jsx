@@ -60,7 +60,7 @@ const ListScreen = () => {
 
   const handleNavigate = (listId) => {
     navigation.navigate('DynamicListScreen', { listId: listId } );
-}
+  }
 
   return (
     <ScrollView className='px-5 pt-12 bg-gray-900'>
