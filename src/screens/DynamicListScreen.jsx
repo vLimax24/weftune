@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native'
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import axios from 'axios';
 import { Settings, ArrowUpDown, ChevronRight, ChevronLeft } from 'lucide-react-native';
@@ -24,23 +24,49 @@ const DynamicListScreen = ({ route }) => {
     setInputValue(text);
   };
 
+  const screenWidth = Dimensions.get('window').width;
+  const itemSize = screenWidth / 3.5;
+
   useEffect(() => {
     const fetchListData = async () => {
       try {
-        const response = await axios.get(`https://www.weftune.com/api/fetchOneList/${listId}`)
+        const response = await axios.get(`https://www.weftune.com/api/fetchOneList/${listId}`);
         const responseData = response.data;
+  
         // Set state variables with response data
-        setItems(responseData.items || []);
-        setName(responseData.name || '');
-        setUsers(responseData.users || []);
-        setBackground(responseData.backgroundImage || '');
-        setTheme(responseData.colorTheme || '');
+        setItems(responseData.items);
+        setName(responseData.name);
+  
+        // Fetch image URLs for each item
+        const itemNames = responseData.items.map(item => item.itemName);
+  
+        const itemImageUrls = await Promise.all(itemNames.map(async (itemName) => {
+          try {
+            const itemResponse = await axios.get(`https://www.weftune.com/api/getItemData/${itemName}`);
+            return itemResponse.data.imageUrl;
+          } catch (error) {
+            console.error(`Error fetching image URL for item ${itemName}:`, error);
+            return null;
+          }
+        }));
+        
+        // Update the items with image URLs
+        setItems(prevItems => {
+          return prevItems.map((item, index) => {
+            return {
+              ...item,
+              imageUrl: itemImageUrls[index]
+            };
+          });
+        });
       } catch (error) {
         console.error('Error fetching list data:', error);
       }
     }
+  
+    const interval = setInterval(fetchListData, 5000);
 
-    fetchListData();
+    return () => clearInterval(interval);
   }, [listId]); // Make sure to include listId in the dependency array to re-fetch data when it changes
 
   const toggleFilter = () => {
@@ -69,8 +95,8 @@ const DynamicListScreen = ({ route }) => {
 
   return (
     <View>
-      <ScrollView className='px-5 pt-10 bg-gray-900'>
-        <View className='fixed flex-row items-center justify-between'>
+      <ScrollView className='px-4 bg-gray-900' stickyHeaderIndices={[0]}>
+        <View className='fixed flex-row items-center justify-between pt-10 pb-5 bg-gray-900'>
           <View className='flex-row items-center justify-center'>
             <ChevronLeft color={'#fff'} size={32} onPress={() => navigation.navigate('List')}/>  
           </View>
@@ -81,17 +107,34 @@ const DynamicListScreen = ({ route }) => {
             </TouchableOpacity>
           </View>
         </View>
-        {/* 
-          View className='flex-row mt-3'>
-            <TouchableOpacity className='flex-row px-3 py-2 border border-gray-400 rounded-md' onPress={toggleFilter}>
-              <ArrowUpDown color={'#fff'} size={20}/>
-              <Text className='ml-2 text-white'>Sort by</Text>
-            </TouchableOpacity>
-          </View>
-        */}
+        <View className='flex-row flex-wrap items-center justify-center my-5'>
+          {items.map((item, index) => {
+            return (
+              <TouchableOpacity key={index} className='items-center justify-center bg-green-500 m-0.5 rounded-lg'
+              style={{
+                width: itemSize, 
+                height: itemSize,
+              }} 
+              >
+                <View className='w-[50px] h-[50px]'>
+                  <Image source={{ uri: item.imageUrl }} className='flex-1 w-full h-full' resizeMode='contain'/>
+                </View>
+                <Text className='text-sm text-gray-500'>{item.customProperties.join(', ')}</Text>
+                <Text className='text-white text-md'>{item.itemName}</Text>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
         <View className='mt-5 mb-32'>
           {categories.map((category, index) => (
-            <TouchableOpacity key={index} className='flex-row items-center justify-between px-3 py-3 bg-gray-800 mt-0.5' onPress={() => navigateToRoute(category[1])}>
+            <TouchableOpacity key={index} className='flex-row items-center justify-between px-3 py-3 bg-gray-800 mt-0.5' onPress={() => navigateToRoute(category[1])}
+            style={{
+              borderTopLeftRadius: index === 0 ? 10 : 0,
+              borderTopRightRadius: index === 0 ? 10 : 0,
+              borderBottomLeftRadius: index === categories.length - 1 ? 10 : 0,
+              borderBottomRightRadius: index === categories.length - 1 ? 10 : 0,
+          }} 
+            >
               <Text className='text-lg text-white'>{category[0]}</Text>
               <ChevronRight color={'#fff'} size={25}/>
             </TouchableOpacity>
