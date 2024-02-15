@@ -66,6 +66,8 @@ const DynamicListScreen = ({ route }) => {
   
     const interval = setInterval(fetchListData, 5000);
 
+    fetchListData();
+
     return () => clearInterval(interval);
   }, [listId]); // Make sure to include listId in the dependency array to re-fetch data when it changes
 
