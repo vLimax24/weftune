@@ -54,7 +54,12 @@ const ListScreen = () => {
       }
     };
 
+  
+  const interval = setInterval(fetchUserLists, 30000);
+
   fetchUserLists();
+
+  return () => clearInterval(interval);
   }, [userEmail]);
 
   const handleNavigate = (listId) => {

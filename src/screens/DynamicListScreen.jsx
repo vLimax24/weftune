@@ -95,6 +95,18 @@ const DynamicListScreen = ({ route }) => {
     navigation.navigate('Item', {category: category, listId: listId})
   }
 
+  const handleItemDelete = async (itemName) => {
+    try {
+      // Send a POST request to the API endpoint to remove the item from the list
+      await axios.post(`https://weftune.com/api/removeItemFromList/${listId}/${itemName}`);
+  
+      // Update the state by removing the deleted item from the items array
+      setItems(prevItems => prevItems.filter(item => item.itemName !== itemName));
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
   return (
     <View>
       <ScrollView className='px-4 bg-gray-900' stickyHeaderIndices={[0]}>
@@ -110,22 +122,29 @@ const DynamicListScreen = ({ route }) => {
           </View>
         </View>
         <View className='flex-row flex-wrap items-center justify-center my-5'>
-          {items.map((item, index) => {
-            return (
-              <TouchableOpacity key={index} className='items-center justify-center bg-green-500 m-0.5 rounded-lg'
+        {items.length === 0 ? (
+          <Text style={{color: 'white', fontSize: 20, textAlign: 'center'}}>
+            Hurra! Du bist fertig!
+          </Text>
+        ) : (
+          items.map((item, index) => (
+            <TouchableOpacity 
+              key={index} 
+              className='items-center justify-center bg-green-500 m-0.5 rounded-lg'
               style={{
                 width: itemSize, 
                 height: itemSize,
               }} 
-              >
-                <View className='w-[50px] h-[50px]'>
-                  <Image source={{ uri: item.imageUrl }} className='flex-1 w-full h-full' resizeMode='contain'/>
-                </View>
-                <Text className='text-sm text-gray-500'>{item.customProperties.join(', ')}</Text>
-                <Text className='text-white text-md'>{item.itemName}</Text>
-              </TouchableOpacity>
-            )
-          })}
+              onPress={() => handleItemDelete(item.itemName)}
+            >
+              <View className='w-[50px] h-[50px]'>
+                <Image source={{ uri: item.imageUrl }} className='flex-1 w-full h-full' resizeMode='contain'/>
+              </View>
+              <Text className='text-sm text-gray-500'>{item.customProperties.join(', ')}</Text>
+              <Text className='text-white text-md'>{item.itemName}</Text>
+            </TouchableOpacity>
+          ))
+        )}
         </View>
         <View className='mt-5 mb-32'>
           {categories.map((category, index) => (

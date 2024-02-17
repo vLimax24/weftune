@@ -19,6 +19,7 @@ const CreateListScreen = () => {
   const [error, setError] = useState('');
   const [ownerId, setOwnerId] = useState('');
   const [successModalVisible, setSuccessModalVisible] = useState(false); // New state variable for success modal
+  const [loadingCreate, setLoadingCreate] = useState(false)
 
   const selectTheme = (selectedTheme) => {
     setTheme(selectedTheme);
