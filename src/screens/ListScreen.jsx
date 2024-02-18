@@ -2,19 +2,13 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'rea
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import { FileQuestion, ChevronRight } from 'lucide-react-native';
+import useUserLists from '../hooks/fetchHooks/useFetchUserLists';
 
 const ListScreen = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [userLists, setUserLists] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const handleRedirectToNewList = () => {
-    navigation.navigate('CreateListScreen');
-  };
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -37,30 +31,12 @@ const ListScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const fetchUserLists = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`https://weftune.com/api/fetchLists/${userEmail}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user lists');
-        }
-        const data = await response.json();
-        setUserLists(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching user lists:', error.message);
-        setIsLoading(false);
-      }
-    };
+  const { userLists, isLoading } = useUserLists(userEmail);
+  console.log(isLoading)
 
-  
-  const interval = setInterval(fetchUserLists, 30000);
-
-  fetchUserLists();
-
-  return () => clearInterval(interval);
-  }, [userEmail]);
+  const handleRedirectToNewList = () => {
+    navigation.navigate('CreateListScreen');
+  };
 
   const handleNavigate = (listId) => {
     navigation.navigate('DynamicListScreen', { listId });

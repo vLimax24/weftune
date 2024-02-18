@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, TextInput, StyleSheet, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
-const Input = ({ placeholder, onChangeText, inputValue, clearInput, width, password }) => {
+const Input = ({ placeholder, onChangeText, inputValue, clearInput, width, password, onFocusProp }) => {
     const [placeholderAnim] = useState(new Animated.Value(1));
     const [focus, setFocus] = useState(false)
     const [inputText, setInputText] = useState('')
@@ -13,7 +13,8 @@ const Input = ({ placeholder, onChangeText, inputValue, clearInput, width, passw
           duration: 200,
           useNativeDriver: false,
         }).start();
-      };
+        if (onFocusProp) onFocusProp(); // Call the additional onFocus logic if provided
+    };
     
       const onBlur = () => {
         if (inputText === '') {

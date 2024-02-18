@@ -2,9 +2,9 @@ import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'rea
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import axios from 'axios';
 import { Settings, ArrowUpDown, ChevronRight, ChevronLeft } from 'lucide-react-native';
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Input from '../components/Input'
 import { useNavigation } from '@react-navigation/native';
+import { BottomSheet } from 'react-native-elements';
 
 const DynamicListScreen = ({ route }) => {
   const navigation = useNavigation()
@@ -16,6 +16,7 @@ const DynamicListScreen = ({ route }) => {
   const [theme, setTheme] = useState('')
   const [filterOpen, setFilterOpen] = useState(false)
   const [category, setCategory] = useState('')
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const { listId } = route.params; // Accessing listId from route params
 
   const snapPoints = useMemo(() => ['30%', '70%'], [])
@@ -70,10 +71,6 @@ const DynamicListScreen = ({ route }) => {
 
     return () => clearInterval(interval);
   }, [listId]); // Make sure to include listId in the dependency array to re-fetch data when it changes
-
-  const toggleFilter = () => {
-    setFilterOpen(!filterOpen)
-  }
 
   const categories = [
     ['Obst & Gemüse', 'OBST_GEMUESE'],
@@ -163,11 +160,36 @@ const DynamicListScreen = ({ route }) => {
         </View>
       </ScrollView>
       <View className='absolute bottom-0 left-0 right-0 items-center justify-center pt-2 bg-gray-900 rounded-t-xl'>
+
+        <BottomSheet
+          isVisible={bottomSheetVisible}
+          containerStyle={{backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)'}}
+        >
+          <View className='bg-gray-900 rounded-lg'>
+          <Input
+            placeholder="Search..."
+            onChangeText={handleInputChange}
+            inputValue={inputValue}
+            width={320}
+            onFocusProp={() => setBottomSheetVisible(true)}
+          />
+            <View className='p-5'>
+              <Text className='mb-5 text-lg text-white'>Search Options</Text>
+              {/* Your search options or additional content goes here */}
+              <TouchableOpacity onPress={() => setBottomSheetVisible(false)}>
+                <View className='p-3 mt-5 bg-red-500 rounded-full'>
+                  <Text className='text-center text-white'>Close</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </BottomSheet>
         <Input
           placeholder="Search..."
           onChangeText={handleInputChange}
           inputValue={inputValue}
           width={320}
+          onFocusProp={() => setBottomSheetVisible(true)}
         />
       </View>
 
