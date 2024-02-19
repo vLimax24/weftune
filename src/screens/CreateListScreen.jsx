@@ -20,6 +20,7 @@ const CreateListScreen = () => {
   const [ownerId, setOwnerId] = useState('');
   const [successModalVisible, setSuccessModalVisible] = useState(false); // New state variable for success modal
   const [loadingCreate, setLoadingCreate] = useState(false)
+  const [loadingList, setLoadingList] = useState(false)
 
   const selectTheme = (selectedTheme) => {
     setTheme(selectedTheme);
@@ -89,6 +90,7 @@ const CreateListScreen = () => {
   };
 
   const createList = async () => {
+    setLoadingList(true)
     try {
       const responseCreateList = await axios.post('https://weftune.com/api/createList', {
         name: name,
@@ -117,6 +119,8 @@ const CreateListScreen = () => {
       }, 1000);
     } catch (e) {
       console.error('Error creating list:', e);
+    } finally {
+      setLoadingList(false)
     }
   };
   
@@ -142,7 +146,12 @@ const CreateListScreen = () => {
       <View className='flex-row items-center justify-between'>
         <Text className='text-2xl font-bold text-white'>Create a new List</Text>
         <TouchableOpacity className='px-2 py-1 bg-green-500 rounded-md' onPress={createList}>
-          <Text className='text-white text-md'>Create</Text>
+          {loadingList ? (
+            <ActivityIndicator size="small " color="#fff" />
+          ) : (
+            <Text className='text-white text-md'>Create</Text>
+          )}
+          
         </TouchableOpacity>
       </View>
       <View className='items-center justify-center mt-10'>

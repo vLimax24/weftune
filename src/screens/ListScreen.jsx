@@ -1,38 +1,14 @@
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FileQuestion, ChevronRight } from 'lucide-react-native';
 import useUserLists from '../hooks/fetchHooks/useFetchUserLists';
+import useFetchUserName from '../hooks/fetchHooks/useFetchUsername'; // Import the custom hook
 
 const ListScreen = () => {
   const navigation = useNavigation();
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const userDataJSON = await AsyncStorage.getItem('userData');
-        if (userDataJSON !== null) {
-          const userData = JSON.parse(userDataJSON);
-          setUserName(userData.name);
-          setUserEmail(userData.email);
-        }
-      } catch (error) {
-        console.error('Error retrieving user data from AsyncStorage:', error);
-      }
-    };
-
-    fetchUserName();
-
-    const interval = setInterval(fetchUserName, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
+  const { userName, userEmail } = useFetchUserName(); // Use the custom hook here
   const { userLists, isLoading } = useUserLists(userEmail);
-  console.log(isLoading)
 
   const handleRedirectToNewList = () => {
     navigation.navigate('CreateListScreen');
