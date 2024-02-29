@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, TextInput, StyleSheet, Animated, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Pencil, ChevronLeft, CheckCircle } from 'lucide-react-native'
+import { Pencil, ChevronLeft, CheckCircle, Settings } from 'lucide-react-native'
 import Input from '../components/Input'
 import { useNavigation } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 
 
 const ProfileScreen = () => {
@@ -83,15 +84,24 @@ const ProfileScreen = () => {
             toggleNameChangeSuccessModal(true)
           }
     }  
+
+    const [fontsLoaded] = useFonts({
+      'Rounded-Black': require('../assets/font/RoundedBlack.otf'),
+    });
   return (
-    <ScrollView className='px-5 pt-12 bg-gray-900'>
-      <Text className='text-2xl font-bold text-white'>Profile</Text>
-      <View className='items-center justify-center mt-16'>
-        <Image source={{ uri: avatar || 'https://ui-avatars.com/api/?name=Default+Name&length=2&background=0459D9&color=8c8b8b&size=128'}} className='w-32 h-32 mb-3 rounded-full' />
-        <TouchableOpacity className='flex-row items-center justify-center' onPress={() => toggleNameChangeModal()}>
-            <Text className='text-xl font-semibold text-white'>{username}</Text>
-            <Pencil className='ml-2 text-white' size={16}/>
+    <ScrollView className='px-5 pt-12 bg-background'>
+      <View className='flex-row justify-between'>
+        <Text className='text-2xl text-[#CDCDCD]' style={styles.font}>Profil</Text>
+        <TouchableOpacity className='p-2.5 rounded-full bg-[#112824]'>
+          <Settings size={20} className='text-[#CDCDCD]'/>
         </TouchableOpacity>
+      </View>
+      <View className='flex-row items-center justify-center mt-12'>
+        <Image source={{ uri: avatar || 'https://ui-avatars.com/api/?name=vLimax&length=2&background=112824&color=CDCDCD&size=72'}} className='w-[72px] h-[72px] mb-3 rounded-full' />
+        <View>
+            <Text className='text-xl font-semibold text-white' style={styles.font}>{username}</Text>
+            <Text className='text-[#858A88]' style={styles.font}>{email}</Text>
+        </View>
       </View>
 
       <Modal
@@ -162,3 +172,9 @@ const ProfileScreen = () => {
 }
 
 export default ProfileScreen
+
+const styles = StyleSheet.create({
+  font: {
+    fontFamily: 'Rounded-Black',
+  }
+})

@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FileQuestion, ChevronRight } from 'lucide-react-native';
 import useUserLists from '../hooks/fetchHooks/useFetchUserLists';
-import useFetchUserName from '../hooks/fetchHooks/useFetchUsername'; // Import the custom hook
+import useFetchUserName from '../hooks/fetchHooks/useFetchUserName'; // Import the custom hook
 
 const ListScreen = () => {
   const navigation = useNavigation();

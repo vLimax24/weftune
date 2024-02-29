@@ -55,7 +55,7 @@ export default function App() {
   const MyTheme = {
     dark: false,
     colors: {
-      background: '#111827',
+      background: '#07110E',
     },
   };
 
